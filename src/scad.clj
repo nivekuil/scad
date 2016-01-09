@@ -4,30 +4,27 @@
 
 ;; Primitives
 (def block
-  (cube 50 50 50))
+  (cube 5 5 5))
 
 (def stick-x
-  (cube 50 50 750))
-
-(def ball
-  (sphere 150))
+  (cube 5 5 75))
 
 (def stick-y
-  (union
-   (map #(translate [0 (* 50 %1) 0] %2)
-        (range)
-        (repeat 16 block))))
+  (rotate [0 (/ Math/PI 2) 0] stick-x))
+
+(def ball
+  (sphere 15))
 
 (def tie-fighter
-  (union (translate [0 375 0] stick-x)
-         (translate [0 -375 0] stick-x)
-         (translate [0 -375 0] stick-y)
+  (union (translate [0 37.5 0] stick-x)
+         (translate [0 -37.5 0] stick-x)
+         (translate [0 -37.5 0] stick-y)
          ball))
 
 (color [0 1 0 1] (hull (union stick-y stick-x)))
 
-(hull (hull stick-x (translate [0 750 0] stick-x))
-      (hull stick-y (translate [0 750 750] stick-x)))
+(hull (hull stick-x (translate [0 75 0] stick-x))
+      (hull stick-y (translate [0 75 75] stick-x)))
 
 (def plus-sign
   (union stick-x (rotate [0 (/ Math/PI 2) 0] stick-x)))
@@ -37,7 +34,20 @@
        (range)
        (repeat 8 plus-sign)))
 
-(map #(translate [(* 375 %1) (* 65 %1) (* 325 %1)] %2) (range) (repeat 10 gear-x))
+(def gearcase
+  (map
+   #(translate [(* 37.5 %1) (* 6 %1) (* 32.5 %1)]
+               (color [(mod %1 0.8) (mod %1 0.7) (mod %1 0.9)] %2))
+   (range)
+   (repeat 16 gear-x)))
+
+(map
+ #(rotate [0 0 (* (/ Math/PI 16) %1)]
+          %2)
+ (range)
+ (repeat 32 gearcase))
+
+
 
 ;; (def intersects
 ;;   (intersection
